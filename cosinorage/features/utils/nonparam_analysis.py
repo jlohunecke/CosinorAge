@@ -388,6 +388,15 @@ def RA(m10: List[float], l5: List[float]) -> List[float]:
     if len(m10) != len(l5):
         raise ValueError("m10 and l5 must have the same length")
 
-    ra = [(m10[i] - l5[i]) / (m10[i] + l5[i]) for i in range(len(m10))]
+    # Safe computation to avoid division by zero; return NaN for undefined RA
+    ra: List[float] = []
+    for i in range(len(m10)):
+        numerator = m10[i] - l5[i]
+        denominator = m10[i] + l5[i]
+
+        if pd.isna(numerator) or pd.isna(denominator) or np.isclose(denominator, 0.0):
+            ra.append(np.nan)
+        else:
+            ra.append(numerator / denominator)
 
     return ra

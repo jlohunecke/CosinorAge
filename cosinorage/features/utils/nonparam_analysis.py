@@ -91,7 +91,7 @@ def IS(data: pd.Series) -> float:
     # Calculate denominator
     denominator = np.sum(np.power(data_["enmo"] - z_mean, 2), axis=0)
 
-    if denominator == 0:
+    if denominator == 0 or np.isnan(denominator) or np.isinf(denominator):
         return np.nan
 
     IS = float(numerator / denominator)
@@ -168,7 +168,7 @@ def IV(data: pd.Series) -> float:
     deviations_squared = np.sum(np.power(data_ - data_.mean(), 2), axis=0)
     denominator = float((P - 1) * deviations_squared.iloc[0])
 
-    if denominator == 0:
+    if denominator == 0 or np.isnan(denominator) or np.isinf(denominator):
         return np.nan
 
     IV = numerator / denominator
@@ -243,7 +243,7 @@ def M10(data: pd.Series) -> List[float]:
         max_mean = float(rolling_means.max().iloc[0])
         max_start_idx = rolling_means.idxmax().iloc[0]
 
-        if pd.isna(max_mean):
+        if pd.isna(max_mean) or np.isnan(max_mean) or np.isinf(max_mean):
             m10.append(np.nan)
             m10_start.append(np.nan)
         else:
@@ -320,7 +320,7 @@ def L5(data: pd.Series) -> List[float]:
         min_mean = float(rolling_means.min().iloc[0])
         min_start_idx = rolling_means.idxmin().iloc[0]
 
-        if pd.isna(min_mean):
+        if pd.isna(min_mean) or np.isnan(min_mean) or np.isinf(min_mean):
             l5.append(np.nan)
             l5_start.append(np.nan)
         else:
@@ -388,6 +388,12 @@ def RA(m10: List[float], l5: List[float]) -> List[float]:
     if len(m10) != len(l5):
         raise ValueError("m10 and l5 must have the same length")
 
-    ra = [(m10[i] - l5[i]) / (m10[i] + l5[i]) for i in range(len(m10))]
+    ra = []
+    for i in range(len(m10)):
+        denominator = m10[i] + l5[i]
+        if denominator == 0 or np.isnan(denominator) or np.isinf(denominator):
+            ra.append(np.nan)
+        else:
+            ra.append((m10[i] - l5[i]) / denominator)
 
     return ra

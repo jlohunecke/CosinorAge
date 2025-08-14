@@ -481,6 +481,10 @@ def SRI(data: pd.DataFrame) -> float:
         ).sum()
         sri += concordance
 
-    sri = float(-100 + 200 / (M * (N - 1)) * sri)
+    denominator = M * (N - 1)
+    if denominator == 0 or np.isnan(denominator) or np.isinf(denominator):
+        return np.nan
+    
+    sri = float(-100 + 200 / denominator * sri)
 
     return sri

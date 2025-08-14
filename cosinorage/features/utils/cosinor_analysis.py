@@ -79,7 +79,11 @@ def cosinor_multiday(df: pd.DataFrame) -> pd.DataFrame:
     if acrophase > 0:
         acrophase -= 2 * np.pi
 
-    acrophase_time = float(-(acrophase + 2 * np.pi) / (2 * np.pi) * 24) + 24
+    # Check for invalid acrophase values
+    if np.isnan(acrophase) or np.isinf(acrophase):
+        acrophase_time = np.nan
+    else:
+        acrophase_time = float(-(acrophase + 2 * np.pi) / (2 * np.pi) * 24) + 24
 
     """
     # Add cosine and sine components

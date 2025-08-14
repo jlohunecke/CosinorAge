@@ -276,13 +276,14 @@ class BulkWearableFeatures:
             print("No valid records found for CosinorAge computation")
             return
 
-        try:
-            # Compute CosinorAge for all valid records
-            cosinorage_computer = CosinorAge([record for _, record in records])
-            predictions = cosinorage_computer.get_predictions()
-
-            # Add CosinorAge features to individual_features
-            for (original_index, _), prediction in zip(records, predictions):
+        # Process each record individually with try-except
+        for original_index, record in records:
+            try:
+                # Compute CosinorAge for this single record
+                cosinorage_computer = CosinorAge([record])
+                predictions = cosinorage_computer.get_predictions()
+                prediction = predictions[0]  # Single record
+                
                 cosinorage_features = {
                     "cosinorage": prediction["cosinorage"],
                     "cosinorage_advance": prediction["cosinorage_advance"],
@@ -297,22 +298,19 @@ class BulkWearableFeatures:
                 
                 # Add to existing features
                 self.individual_features[original_index]["cosinorage"] = cosinorage_features
-
-        except Exception as e:
-            print(f"Failed to compute CosinorAge features: {str(e)}")
-            # Add empty cosinorage features to all successful computations
-            for i, features in enumerate(self.individual_features):
-                if features is not None:
-                    cosinorage_features = {
-                        "cosinorage": None,
-                        "cosinorage_advance": None,
-                    }
-                    
-                    # Add prediction error if ground truth is available
-                    if self.compute_prediction_error:
-                        cosinorage_features["cosinor_age_prediction_error"] = None
-                    
-                    features["cosinorage"] = cosinorage_features
+                
+            except Exception as e:
+                print(f"Failed to compute CosinorAge features for record {original_index}: {str(e)}")
+                # Add null cosinorage features for this specific record
+                cosinorage_features = {
+                    "cosinorage": None,
+                    "cosinorage_advance": None,
+                }
+                
+                if self.compute_prediction_error:
+                    cosinorage_features["cosinor_age_prediction_error"] = None
+                
+                self.individual_features[original_index]["cosinorage"] = cosinorage_features
 
     def __compute_distributions(self):
         """Compute statistical distributions across all features.

@@ -93,39 +93,69 @@ class CosinorAge:
             - cosinorage: Predicted biological age
             - cosinorage_advance: Difference between predicted and chronological age
         """
+        import numpy as np
+        import pandas as pd
+        
         for record in self.records:
-            result = cosinor_multiday(record["handler"].get_ml_data())[0]
+            try:
+                result = cosinor_multiday(record["handler"].get_ml_data())[0]
 
-            record["mesor"] = result["mesor"]
-            record["amp1"] = result["amplitude"]
-            record["phi1"] = result["acrophase"]
+                # Check if cosinor parameters are valid
+                mesor = result["mesor"]
+                amplitude = result["amplitude"]
+                acrophase = result["acrophase"]
+                
+                # Validate cosinor parameters
+                if (pd.isna(mesor) or np.isnan(mesor) or np.isinf(mesor) or
+                    pd.isna(amplitude) or np.isnan(amplitude) or np.isinf(amplitude) or
+                    pd.isna(acrophase) or np.isnan(acrophase) or np.isinf(acrophase)):
+                    
+                    # Set invalid values for this record
+                    record["mesor"] = None
+                    record["amp1"] = None
+                    record["phi1"] = None
+                    record["cosinorage"] = None
+                    record["cosinorage_advance"] = None
+                    continue
 
-            bm_data = {
-                "mesor": result["mesor"],
-                "amp1": result["amplitude"],
-                "phi1": result["acrophase"],
-                "age": record["age"],
-            }
+                record["mesor"] = mesor
+                record["amp1"] = amplitude
+                record["phi1"] = acrophase
 
-            gender = record.get("gender", "unknown")
-            if gender == "female":
-                coef = self.model_params_female
-            elif gender == "male":
-                coef = self.model_params_male
-            else:
-                coef = self.model_params_generic
+                bm_data = {
+                    "mesor": mesor,
+                    "amp1": amplitude,
+                    "phi1": acrophase,
+                    "age": record["age"],
+                }
 
-            n1 = {key: bm_data[key] * coef[key] for key in bm_data}
-            xb = sum(n1.values()) + coef["rate"]
-            m_val = 1 - np.exp((m_n * np.exp(xb)) / m_d)
-            cosinorage = float(
-                ((np.log(BA_n * np.log(1 - m_val))) / BA_d) + BA_i
-            )
+                gender = record.get("gender", "unknown")
+                if gender == "female":
+                    coef = self.model_params_female
+                elif gender == "male":
+                    coef = self.model_params_male
+                else:
+                    coef = self.model_params_generic
 
-            record["cosinorage"] = float(cosinorage)
-            record["cosinorage_advance"] = float(
-                record["cosinorage"] - record["age"]
-            )
+                n1 = {key: bm_data[key] * coef[key] for key in bm_data}
+                xb = sum(n1.values()) + coef["rate"]
+                m_val = 1 - np.exp((m_n * np.exp(xb)) / m_d)
+                cosinorage = float(
+                    ((np.log(BA_n * np.log(1 - m_val))) / BA_d) + BA_i
+                )
+
+                record["cosinorage"] = float(cosinorage)
+                record["cosinorage_advance"] = float(
+                    record["cosinorage"] - record["age"]
+                )
+                
+            except Exception as e:
+                # Set invalid values for this record if any error occurs
+                record["mesor"] = None
+                record["amp1"] = None
+                record["phi1"] = None
+                record["cosinorage"] = None
+                record["cosinorage_advance"] = None
 
     def get_predictions(self):
         """Return the processed records with CosinorAge predictions.
@@ -144,6 +174,11 @@ class CosinorAge:
             - Numerical values for both ages
         """
         for record in self.records:
+            # Skip records with invalid cosinorage values
+            if record["cosinorage"] is None:
+                print(f"Skipping plot for record with invalid cosinorage value")
+                continue
+                
             plt.figure(figsize=(22.5, 2.5))
             plt.hlines(
                 y=0,

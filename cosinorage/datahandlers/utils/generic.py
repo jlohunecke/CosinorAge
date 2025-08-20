@@ -568,7 +568,8 @@ def preprocess_generic_data(
                 verbose=verbose,
             )
         except:
-            print("Calibration failed, skipping calibration")
+            if verbose:
+                print("Calibration failed, skipping calibration")
 
         # noise removal
         try:
@@ -582,7 +583,8 @@ def preprocess_generic_data(
                 verbose=verbose,
             )
         except:
-            print("Noise removal failed, skipping noise removal")
+            if verbose:
+                print("Noise removal failed, skipping noise removal")
 
         # wear detection
         try:
@@ -606,7 +608,8 @@ def preprocess_generic_data(
                 _data, sf=meta_dict["sf"], meta_dict=meta_dict, verbose=verbose
             )
         except:
-            print("Wear time calculation failed, skipping wear time calculation")
+            if verbose:
+                print("Wear time calculation failed, skipping wear time calculation")
 
         _data["enmo"] = calculate_enmo(_data, verbose=verbose) * 1000
 

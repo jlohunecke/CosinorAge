@@ -26,6 +26,7 @@ import time
 def clock(func):
     """
     A decorator that prints the execution time of the decorated function.
+    Only prints when verbose=True is passed to the decorated function.
 
     Args:
         func (function): The function to be decorated.
@@ -38,7 +39,12 @@ def clock(func):
         start = time.time()
         result = func(*args, **kwargs)
         end = time.time()
-        print(f"{func.__name__} executed in {end - start:.2f} seconds")
+        
+        # Check if verbose=True was passed to the function
+        verbose = kwargs.get('verbose', False)
+        if verbose:
+            print(f"{func.__name__} executed in {end - start:.2f} seconds")
+        
         return result
 
     return inner

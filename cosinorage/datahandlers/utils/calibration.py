@@ -102,7 +102,7 @@ def calibrate_accelerometer(
     acc = np.array(_data[["x", "y", "z"]]).astype(np.float64)
 
     calibrator = CalibrateAccelerometer(
-        sphere_crit=sphere_crit, sd_criteria=sd_criteria
+        sphere_crit=sphere_crit, min_hours=24, sd_crit=sd_criteria
     )
     sf = meta_dict.get("sf", 25)  # Default to 25Hz if not specified
     result = calibrator.predict(time=time, accel=acc, fs=sf)

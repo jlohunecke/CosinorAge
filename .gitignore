@@ -76,3 +76,6 @@ logs/
 # Temporary files
 *.tmp
 *.temp
+
+# User configuration files
+~/

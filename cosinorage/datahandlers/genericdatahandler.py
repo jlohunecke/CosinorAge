@@ -36,36 +36,31 @@ class GenericDataHandler(DataHandler):
     data (x, y, z), and alternative count data. It supports automatic data filtering,
     resampling, preprocessing, and ENMO calculation.
 
-    Parameters
-    ----------
-    file_path : str
-        Path to the CSV file containing the data.
-    data_format : str, default='csv'
-        Format of the data file. Currently only 'csv' is supported.
-    data_type : str, default='accelerometer'
-        Type of data in the file. Must be one of:
-        - 'enmo': ENMO (Euclidean Norm Minus One) data
-        - 'accelerometer': Raw accelerometer data (x, y, z)
-        - 'alternative_count': Alternative count data
-    time_column : str, default='time'
-        Name of the timestamp column in the CSV file.
-    data_columns : list, optional
-        Names of the data columns in the CSV file. If not provided, defaults are:
-        - ['enmo'] for data_type='enmo'
-        - ['x', 'y', 'z'] for data_type='accelerometer'
-        - ['counts'] for data_type='alternative_count'
-    preprocess_args : dict, default={}
-        Additional preprocessing arguments to pass to the filtering and preprocessing functions.
-    verbose : bool, default=False
-        Whether to print progress information during data loading and processing.
+
 
     Attributes
     ----------
-    raw_data : pd.DataFrame
+    file_path : str
+        Path to the CSV file containing the data.
+    data_format : str
+        Format of the data file.
+    data_type : str
+        Type of data in the file.
+    time_format : str
+        Format of timestamps.
+    time_column : str
+        Name of the timestamp column.
+    time_zone : str or None
+        Timezone for datetime conversion.
+    data_columns : list
+        Names of the data columns.
+    preprocess_args : dict
+        Preprocessing arguments.
+    raw_data : pd.DataFrame or None
         Raw data loaded from the file with timestamp index.
-    sf_data : pd.DataFrame
+    sf_data : pd.DataFrame or None
         Data after filtering and resampling (sensor fusion data).
-    ml_data : pd.DataFrame
+    ml_data : pd.DataFrame or None
         Minute-level ENMO data calculated from the processed data.
     meta_dict : dict
         Metadata dictionary containing information about the data processing.
@@ -118,6 +113,36 @@ class GenericDataHandler(DataHandler):
         preprocess_args: dict = {},
         verbose: bool = False,
     ):
+        """
+        Initialize GenericDataHandler with CSV data file.
+
+        Parameters
+        ----------
+        file_path : str
+            Path to the CSV file containing the data.
+        data_format : str, default='csv'
+            Format of the data file. Currently only 'csv' is supported.
+        data_type : str, default='accelerometer-mg'
+            Type of data in the file. Must be one of:
+            - 'enmo-mg', 'enmo-g': ENMO (Euclidean Norm Minus One) data
+            - 'accelerometer-mg', 'accelerometer-g', 'accelerometer-ms2': Raw accelerometer data (x, y, z)
+            - 'alternative_count': Alternative count data
+        time_format : str, default='unix-ms'
+            Format of timestamps. Must be one of: 'unix-ms', 'unix-s', 'datetime'.
+        time_column : str, default='timestamp'
+            Name of the timestamp column in the CSV file.
+        time_zone : str, optional
+            Timezone for datetime conversion. If None, uses local timezone.
+        data_columns : list, optional
+            Names of the data columns in the CSV file. If not provided, defaults are:
+            - ['enmo'] for data_type='enmo-mg' or 'enmo-g'
+            - ['x', 'y', 'z'] for data_type='accelerometer-mg', 'accelerometer-g', or 'accelerometer-ms2'
+            - ['counts'] for data_type='alternative_count'
+        preprocess_args : dict, default={}
+            Additional preprocessing arguments to pass to the filtering and preprocessing functions.
+        verbose : bool, default=False
+            Whether to print progress information during data loading and processing.
+        """
 
         super().__init__()
 

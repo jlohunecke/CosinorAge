@@ -33,9 +33,9 @@ def cosinor_multiday(df: pd.DataFrame) -> pd.DataFrame:
     df : pandas.DataFrame
         DataFrame with a Timestamp index and a column 'ENMO' containing minute-level activity data.
 
-    Returns:
-    --------
-    tuple:
+    Returns
+    -------
+    tuple
         - dict: Dictionary containing cosinor parameters:
             - MESOR: Midline Estimating Statistic Of Rhythm (rhythm-adjusted mean)
             - amplitude: Half the difference between maximum and minimum values

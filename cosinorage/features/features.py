@@ -34,16 +34,23 @@ class WearableFeatures:
     circadian rhythm and physical activity metrics, including cosinor analysis,
     non-parametric measures, activity levels, and sleep metrics.
 
-    Attributes:
-        enmo (pd.DataFrame): Raw ENMO data with datetime index
-        feature_dict (dict): Additional feature storage (if needed)
+    Attributes
+    ----------
+    ml_data : pd.DataFrame
+        Minute-level ENMO data with datetime index
+    features_args : dict
+        Arguments passed to feature computation functions
+    feature_dict : dict
+        Dictionary containing computed features organized by category
     """
 
     def __init__(self, handler: DataHandler, features_args: dict = {}):
         """Initialize WearableFeatures with data from a DataHandler.
 
-        Args:
-            handler (DataHandler): DataHandler instance containing ENMO data
+        Parameters
+        ----------
+        handler : DataHandler
+            DataHandler instance containing ENMO data
         """
         self.ml_data = handler.get_ml_data().copy()
         self.features_args = features_args
@@ -167,15 +174,19 @@ class WearableFeatures:
     def get_features(self):
         """Returns the entire feature DataFrame.
 
-        Returns:
-            pd.DataFrame: DataFrame containing all computed features
+        Returns
+        -------
+        pd.DataFrame
+            DataFrame containing all computed features
         """
         return self.feature_dict
 
     def get_ml_data(self):
         """Returns the raw ENMO data.
 
-        Returns:
-            pd.DataFrame: DataFrame containing ENMO data with datetime index
+        Returns
+        -------
+        pd.DataFrame
+            DataFrame containing ENMO data with datetime index
         """
         return self.ml_data

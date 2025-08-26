@@ -90,70 +90,80 @@ class BulkWearableFeatures:
     continue even when some datasets fail to process. It provides both individual
     feature access and aggregated statistical summaries.
 
-    Args:
-        handlers (List[DataHandler]): List of DataHandler instances containing ENMO data.
-            Each handler should have been properly initialized and loaded with data.
-        features_args (dict, optional): Arguments for feature computation passed to
-            WearableFeatures. Common arguments include:
-            - 'pa_params': Physical activity parameters
-            - 'sleep_params': Sleep detection parameters
-            Defaults to empty dict.
-        compute_distributions (bool, optional): Whether to compute statistical distributions
-            across all features. If False, only individual features are computed.
-            Defaults to True.
-        cosinor_age_inputs (List[dict], optional): List of dictionaries containing age and
-            gender information for CosinorAge computation. Each dictionary should contain:
-            - 'age': Chronological age (float)
-            - 'gender': Gender ('male', 'female', or 'unknown', optional, defaults to 'unknown')
-            - 'gt_cosinor_age': Ground truth cosinor age (float, optional)
-            Must be the same length as handlers if provided. If all dictionaries contain
-            'gt_cosinor_age', a 'cosinor_age_prediction_error' feature will be computed.
-            Defaults to None.
+    Parameters
+    ----------
+    handlers : List[DataHandler]
+        List of DataHandler instances containing ENMO data.
+        Each handler should have been properly initialized and loaded with data.
+    features_args : dict, optional
+        Arguments for feature computation passed to WearableFeatures. Common arguments include:
+        - 'pa_params': Physical activity parameters
+        - 'sleep_params': Sleep detection parameters
+        Defaults to empty dict.
+    compute_distributions : bool, optional
+        Whether to compute statistical distributions across all features. If False, only individual features are computed.
+        Defaults to True.
+    cosinor_age_inputs : List[dict], optional
+        List of dictionaries containing age and gender information for CosinorAge computation. Each dictionary should contain:
+        - 'age': Chronological age (float)
+        - 'gender': Gender ('male', 'female', or 'unknown', optional, defaults to 'unknown')
+        - 'gt_cosinor_age': Ground truth cosinor age (float, optional)
+        Must be the same length as handlers if provided. If all dictionaries contain
+        'gt_cosinor_age', a 'cosinor_age_prediction_error' feature will be computed.
+        Defaults to None.
 
-    Attributes:
-        handlers (List[DataHandler]): List of DataHandler instances provided during initialization
-        features_args (dict): Arguments for feature computation
-        cosinor_age_inputs (List[dict]): List of age/gender dictionaries for CosinorAge computation
-        individual_features (List[dict]): List of feature dictionaries for each handler.
-            Failed computations are represented as None.
-        distribution_stats (dict): Statistical distributions across all features.
-            Only populated if compute_distributions=True.
-        failed_handlers (List[tuple]): List of (handler_index, error_message) tuples
-            for handlers that failed during feature computation.
+    Attributes
+    ----------
+    handlers : List[DataHandler]
+        List of DataHandler instances provided during initialization
+    features_args : dict
+        Arguments for feature computation
+    cosinor_age_inputs : List[dict]
+        List of age/gender dictionaries for CosinorAge computation
+    individual_features : List[dict]
+        List of feature dictionaries for each handler.
+        Failed computations are represented as None.
+    distribution_stats : dict
+        Statistical distributions across all features.
+        Only populated if compute_distributions=True.
+    failed_handlers : List[tuple]
+        List of (handler_index, error_message) tuples
+        for handlers that failed during feature computation.
 
-    Example:
-        >>> from cosinorage.datahandlers import GalaxyDataHandler
-        >>> from cosinorage.features import BulkWearableFeatures
-        >>>
-        >>> # Create multiple handlers
-        >>> handlers = []
-        >>> for i in range(3):
-        ...     handler = GalaxyDataHandler(f"data/participant_{i}.csv")
-        ...     handler.load_data()
-        ...     handlers.append(handler)
-        >>>
-        >>> # Define age and gender information for CosinorAge computation
-        >>> cosinor_age_inputs = [
-        ...     {"age": 25.5, "gender": "female", "gt_cosinor_age": 26.2},
-        ...     {"age": 30.2, "gender": "male", "gt_cosinor_age": 31.1},
-        ...     {"age": 28.0, "gender": "unknown", "gt_cosinor_age": 27.8}
-        ... ]
-        >>>
-        >>> # Compute bulk features with CosinorAge
-        >>> bulk = BulkWearableFeatures(
-        ...     handlers, 
-        ...     compute_distributions=True,
-        ...     cosinor_age_inputs=cosinor_age_inputs
-        ... )
-        >>>
-        >>> # Get statistical summary (includes CosinorAge features)
-        >>> stats = bulk.get_distribution_stats()
-        >>> print(f"Computed features for {len(stats)} feature types")
-        >>>
-        >>> # Check for failures
-        >>> failed = bulk.get_failed_handlers()
-        >>> if failed:
-        ...     print(f"Failed handlers: {len(failed)}")
+    Examples
+    --------
+    >>> from cosinorage.datahandlers import GalaxyDataHandler
+    >>> from cosinorage.features import BulkWearableFeatures
+    >>>
+    >>> # Create multiple handlers
+    >>> handlers = []
+    >>> for i in range(3):
+    ...     handler = GalaxyDataHandler(f"data/participant_{i}.csv")
+    ...     handler.load_data()
+    ...     handlers.append(handler)
+    >>>
+    >>> # Define age and gender information for CosinorAge computation
+    >>> cosinor_age_inputs = [
+    ...     {"age": 25.5, "gender": "female", "gt_cosinor_age": 26.2},
+    ...     {"age": 30.2, "gender": "male", "gt_cosinor_age": 31.1},
+    ...     {"age": 28.0, "gender": "unknown", "gt_cosinor_age": 27.8}
+    ... ]
+    >>>
+    >>> # Compute bulk features with CosinorAge
+    >>> bulk = BulkWearableFeatures(
+    ...     handlers, 
+    ...     compute_distributions=True,
+    ...     cosinor_age_inputs=cosinor_age_inputs
+    ... )
+    >>>
+    >>> # Get statistical summary (includes CosinorAge features)
+    >>> stats = bulk.get_distribution_stats()
+    >>> print(f"Computed features for {len(stats)} feature types")
+    >>>
+    >>> # Check for failures
+    >>> failed = bulk.get_failed_handlers()
+    >>> if failed:
+    ...     print(f"Failed handlers: {len(failed)}")
     """
 
     def __init__(
@@ -165,21 +175,24 @@ class BulkWearableFeatures:
     ):
         """Initialize BulkWearableFeatures with multiple DataHandler instances.
 
-        Args:
-            handlers (List[DataHandler]): List of DataHandler instances containing ENMO data.
-                Each handler should have been properly initialized and loaded with data.
-            features_args (dict, optional): Arguments for feature computation passed to
-                WearableFeatures. Common arguments include:
-                - 'pa_params': Physical activity parameters
-                - 'sleep_params': Sleep detection parameters
-                Defaults to empty dict.
-            compute_distributions (bool, optional): Whether to compute statistical distributions
-                across all features. If False, only individual features are computed.
-                Defaults to True.
+        Parameters
+        ----------
+        handlers : List[DataHandler]
+            List of DataHandler instances containing ENMO data.
+            Each handler should have been properly initialized and loaded with data.
+        features_args : dict, optional
+            Arguments for feature computation passed to WearableFeatures. Common arguments include:
+            - 'pa_params': Physical activity parameters
+            - 'sleep_params': Sleep detection parameters
+            Defaults to empty dict.
+        compute_distributions : bool, optional
+            Whether to compute statistical distributions across all features. If False, only individual features are computed.
+            Defaults to True.
 
-        Note:
-            Empty handlers list is allowed and will result in empty individual_features
-            and distribution_stats.
+        Notes
+        -----
+        Empty handlers list is allowed and will result in empty individual_features
+        and distribution_stats.
         """
 
         self.handlers = handlers
@@ -220,9 +233,10 @@ class BulkWearableFeatures:
         for later inspection. If cosinor_age_inputs is provided, CosinorAge features
         are also computed and added to the individual features.
 
-        Args:
-            compute_distributions (bool): Whether to compute statistical distributions
-                after individual feature computation.
+        Parameters
+        ----------
+        compute_distributions : bool
+            Whether to compute statistical distributions after individual feature computation.
         """
 
         # Compute features for each handler
@@ -343,13 +357,15 @@ class BulkWearableFeatures:
         represents one feature. Nested features are flattened using the pattern
         'category_feature_name'.
 
-        Args:
-            features_list (List[dict]): List of feature dictionaries from successful
-                computations. Each dictionary contains nested feature categories.
+        Parameters
+        ----------
+        features_list : List[dict]
+            List of feature dictionaries from successful computations. Each dictionary contains nested feature categories.
 
-        Returns:
-            pd.DataFrame: Flattened features DataFrame with handler_index column and
-                one column per feature. Non-numeric features are excluded.
+        Returns
+        -------
+        pd.DataFrame
+            Flattened features DataFrame with handler_index column and one column per feature. Non-numeric features are excluded.
         """
         flattened_data = []
 
@@ -426,11 +442,13 @@ class BulkWearableFeatures:
         feature across all handlers. It includes descriptive statistics, distribution
         measures, and handles edge cases like empty data or single values.
 
-        Args:
-            df (pd.DataFrame): Flattened features DataFrame with handler_index column
-                and numeric feature columns.
+        Parameters
+        ----------
+        df : pd.DataFrame
+            Flattened features DataFrame with handler_index column and numeric feature columns.
 
-        Returns:
+        Returns
+        -------
             Dict[str, Dict[str, float]]: Dictionary where keys are feature names and
                 values are dictionaries containing statistical measures:
                 - count: Number of non-null values
@@ -499,18 +517,21 @@ class BulkWearableFeatures:
         This method provides access to the raw feature dictionaries computed for
         each handler. Failed computations are represented as None entries in the list.
 
-        Returns:
-            List[dict]: List of feature dictionaries, one per handler. Each dictionary
-                contains nested feature categories (cosinor, nonparam, physical_activity, sleep).
-                If a handler failed during computation, its entry is None.
+        Returns
+        -------
+        List[dict]
+            List of feature dictionaries, one per handler. Each dictionary
+            contains nested feature categories (cosinor, nonparam, physical_activity, sleep).
+            If a handler failed during computation, its entry is None.
 
-        Example:
-            >>> features = bulk.get_individual_features()
-            >>> for i, feat in enumerate(features):
-            ...     if feat is not None:
-            ...         print(f"Handler {i}: MESOR = {feat['cosinor']['mesor']:.3f}")
-            ...     else:
-            ...         print(f"Handler {i}: Failed")
+        Examples
+        --------
+        >>> features = bulk.get_individual_features()
+        >>> for i, feat in enumerate(features):
+        ...     if feat is not None:
+        ...         print(f"Handler {i}: MESOR = {feat['cosinor']['mesor']:.3f}")
+        ...     else:
+        ...         print(f"Handler {i}: Failed")
         """
         return self.individual_features
 
@@ -521,18 +542,21 @@ class BulkWearableFeatures:
         across all successful computations. The statistics include descriptive
         measures, distribution characteristics, and quartile information.
 
-        Returns:
-            Dict[str, Dict[str, float]]: Statistical distributions for each feature.
-                Keys are feature names (e.g., 'cosinor_mesor', 'nonparam_IS').
-                Values are dictionaries containing statistical measures:
-                - count, mean, std, min, max, median
-                - q25, q75, iqr (interquartile range)
-                - mode, skewness
+        Returns
+        -------
+        Dict[str, Dict[str, float]]
+            Statistical distributions for each feature.
+            Keys are feature names (e.g., 'cosinor_mesor', 'nonparam_IS').
+            Values are dictionaries containing statistical measures:
+            - count, mean, std, min, max, median
+            - q25, q75, iqr (interquartile range)
+            - mode, skewness
 
-        Example:
-            >>> stats = bulk.get_distribution_stats()
-            >>> mesor_stats = stats['cosinor_mesor']
-            >>> print(f"MESOR: mean={mesor_stats['mean']:.3f}, std={mesor_stats['std']:.3f}")
+        Examples
+        --------
+        >>> stats = bulk.get_distribution_stats()
+        >>> mesor_stats = stats['cosinor_mesor']
+        >>> print(f"MESOR: mean={mesor_stats['mean']:.3f}, std={mesor_stats['std']:.3f}")
         """
         return self.distribution_stats
 
@@ -542,15 +566,18 @@ class BulkWearableFeatures:
         This method provides details about which handlers failed and why, allowing
         for debugging and quality control in large-scale analyses.
 
-        Returns:
-            List[tuple]: List of (handler_index, error_message) tuples for handlers
-                that failed during feature computation. Empty list if all handlers
-                succeeded.
+        Returns
+        -------
+        List[tuple]
+            List of (handler_index, error_message) tuples for handlers
+            that failed during feature computation. Empty list if all handlers
+            succeeded.
 
-        Example:
-            >>> failed = bulk.get_failed_handlers()
-            >>> for idx, error in failed:
-            ...     print(f"Handler {idx} failed: {error}")
+        Examples
+        --------
+        >>> failed = bulk.get_failed_handlers()
+        >>> for idx, error in failed:
+        ...     print(f"Handler {idx} failed: {error}")
         """
         return self.failed_handlers
 
@@ -560,17 +587,20 @@ class BulkWearableFeatures:
         This method converts the statistical distributions into a pandas DataFrame
         format, making it easy to export, analyze, or visualize the results.
 
-        Returns:
-            pd.DataFrame: Summary DataFrame with features as rows and statistics as columns.
-                Columns include: feature, count, mean, std, min, max, median, q25, q75,
-                iqr, mode, skewness. Empty DataFrame if no distributions
-                were computed.
+        Returns
+        -------
+        pd.DataFrame
+            Summary DataFrame with features as rows and statistics as columns.
+            Columns include: feature, count, mean, std, min, max, median, q25, q75,
+            iqr, mode, skewness. Empty DataFrame if no distributions
+            were computed.
 
-        Example:
-            >>> summary_df = bulk.get_summary_dataframe()
-            >>> print(summary_df.head())
-            >>> # Export to CSV
-            >>> summary_df.to_csv('feature_summary.csv', index=False)
+        Examples
+        --------
+        >>> summary_df = bulk.get_summary_dataframe()
+        >>> print(summary_df.head())
+        >>> # Export to CSV
+        >>> summary_df.to_csv('feature_summary.csv', index=False)
         """
         if not self.distribution_stats:
             return pd.DataFrame()
@@ -591,18 +621,21 @@ class BulkWearableFeatures:
         across all successful computations. This is useful for understanding
         feature relationships and identifying redundant or highly correlated features.
 
-        Returns:
-            pd.DataFrame: Correlation matrix of features. Values range from -1 to 1,
-                where 1 indicates perfect positive correlation, -1 indicates perfect
-                negative correlation, and 0 indicates no correlation. Empty DataFrame
-                if insufficient data (less than 2 features or no successful computations).
+        Returns
+        -------
+        pd.DataFrame
+            Correlation matrix of features. Values range from -1 to 1,
+            where 1 indicates perfect positive correlation, -1 indicates perfect
+            negative correlation, and 0 indicates no correlation. Empty DataFrame
+            if insufficient data (less than 2 features or no successful computations).
 
-        Example:
-            >>> corr_matrix = bulk.get_feature_correlation_matrix()
-            >>> print(corr_matrix['cosinor_mesor']['nonparam_IS'])  # Correlation between MESOR and IS
-            >>> # Visualize with heatmap
-            >>> import seaborn as sns
-            >>> sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
+        Examples
+        --------
+        >>> corr_matrix = bulk.get_feature_correlation_matrix()
+        >>> print(corr_matrix['cosinor_mesor']['nonparam_IS'])  # Correlation between MESOR and IS
+        >>> # Visualize with heatmap
+        >>> import seaborn as sns
+        >>> sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
         """
         # Flatten features and create DataFrame
         valid_features = [f for f in self.individual_features if f is not None]

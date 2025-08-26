@@ -19,6 +19,47 @@
 # limitations under the License.
 ##########################################################################
 
+"""
+Utility functions for accelerometer data processing and handling.
+
+This module provides a comprehensive set of utility functions for loading,
+processing, and analyzing accelerometer data from various sources including:
+
+**Data Loading and Processing:**
+- calc_enmo: ENMO (Euclidean Norm Minus One) calculation utilities
+- filtering: Data filtering for incomplete days and consecutive sequences
+- frequency_detection: Automatic sampling frequency detection
+- generic: Generic data loading and processing functions
+
+**Device-Specific Handlers:**
+- galaxy_binary: Samsung Galaxy Watch binary data processing
+- galaxy_csv: Samsung Galaxy Watch CSV data processing
+- nhanes: NHANES dataset processing utilities
+- ukb: UK Biobank data processing utilities
+
+**Data Quality and Preprocessing:**
+- calibration: Accelerometer calibration using sphere fitting
+- noise_removal: Digital filtering for noise reduction
+- wear_detection: Wear time detection and analysis
+
+**Visualization:**
+- visualization: Plotting functions for ENMO data and frequency analysis
+
+**Usage:**
+    These utilities are typically used internally by the various DataHandler
+    classes, but can also be imported directly for custom data processing
+    workflows.
+
+**Examples:**
+    >>> from cosinorage.datahandlers.utils import calculate_enmo, filter_incomplete_days
+    >>> # Calculate ENMO from accelerometer data
+    >>> enmo_values = calculate_enmo(accel_data)
+    >>> # Filter incomplete days
+    >>> filtered_data = filter_incomplete_days(enmo_data)
+    >>> # Detect sampling frequency
+    >>> freq = detect_frequency_from_timestamps(timestamps)
+"""
+
 # Import functions from various utility modules
 from .calc_enmo import calculate_enmo, calculate_minute_level_enmo
 from .filtering import filter_incomplete_days, filter_consecutive_days, largest_consecutive_sequence

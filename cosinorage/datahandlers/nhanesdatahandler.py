@@ -32,14 +32,12 @@ class NHANESDataHandler(DataHandler):
 
     This class handles loading, filtering, and processing of NHANES accelerometer data.
 
-    Args:
-        nhanes_file_dir (str): Directory path containing NHANES data files.
-        seqn (str, optional): Specific person ID to load. Defaults to None.
-        verbose (bool, optional): Whether to print processing information. Defaults to False.
-
-    Attributes:
-        nhanes_file_dir (str): Directory containing NHANES data files.
-        seqn (str): ID of the person whose data is being loaded.
+    Attributes
+    ----------
+    nhanes_file_dir : str
+        Directory containing NHANES data files.
+    seqn : str or None
+        ID of the person whose data is being loaded.
     """
 
     def __init__(
@@ -62,8 +60,10 @@ class NHANESDataHandler(DataHandler):
         """
         Internal method to load and process NHANES data.
 
-        Args:
-            verbose (bool, optional): Whether to print processing information. Defaults to False.
+        Parameters
+        ----------
+        verbose : bool, optional
+            Whether to print processing information. Defaults to False.
         """
 
         self.raw_data = read_nhanes_data(

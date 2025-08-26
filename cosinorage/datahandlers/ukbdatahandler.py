@@ -31,16 +31,14 @@ class UKBDataHandler(DataHandler):
 
     This class handles loading, filtering, and processing of UK Biobank accelerometer data.
 
-    Args:
-        qa_file_path (str): Path to the quality assessment file.
-        ukb_file_dir (str): Directory path containing UK Biobank data files.
-        eid (int): Participant ID in the UK Biobank.
-        verbose (bool, optional): Whether to print processing information. Defaults to False.
-
-    Attributes:
-        qa_file_path (str): Path to quality assessment file.
-        ukb_file_dir (str): Directory containing UK Biobank data files.
-        eid (int): Participant ID.
+    Attributes
+    ----------
+    qa_file_path : str
+        Path to quality assessment file.
+    ukb_file_dir : str
+        Directory containing UK Biobank data files.
+    eid : int
+        Participant ID.
     """
 
     def __init__(
@@ -72,8 +70,10 @@ class UKBDataHandler(DataHandler):
         """
         Internal method to load and process UK Biobank data.
 
-        Args:
-            verbose (bool, optional): Whether to print processing information. Defaults to False.
+        Parameters
+        ----------
+        verbose : bool, optional
+            Whether to print processing information. Defaults to False.
         """
 
         self.raw_data = read_ukb_data(

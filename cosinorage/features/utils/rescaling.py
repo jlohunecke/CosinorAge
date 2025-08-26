@@ -42,10 +42,13 @@ def min_max_scaling_exclude_outliers(data, upper_quantile=0.999):
     Returns
     -------
     pd.Series
-        Scaled data with values generally ranging from 0 to 100. Note:
-        - If input contains all identical values, returns zeros
-        - Values above the upper_quantile may exceed 100 in the output
-        - Output maintains the same length as input
+        Scaled data with values generally ranging from 0 to 100.
+
+    Notes
+    -----
+    - If input contains all identical values, returns zeros
+    - Values above the upper_quantile may exceed 100 in the output
+    - Output maintains the same length as input
 
     Raises
     ------

@@ -43,15 +43,23 @@ def read_galaxy_binary_data(
     """
     Read accelerometer data from Galaxy Watch binary files.
 
-    Args:
-        galaxy_file_dir (str): Directory containing Galaxy Watch data files
-        meta_dict (dict): Dictionary to store metadata about the loaded data
-        time_column (str): Name of the timestamp column in the binary data
-        data_columns (list): Names of the data columns in the binary data
-        verbose (bool): Whether to print progress information
+    Parameters
+    ----------
+    galaxy_file_dir : str
+        Directory containing Galaxy Watch data files
+    meta_dict : dict
+        Dictionary to store metadata about the loaded data
+    time_column : str
+        Name of the timestamp column in the binary data
+    data_columns : list
+        Names of the data columns in the binary data
+    verbose : bool
+        Whether to print progress information
 
-    Returns:
-        pd.DataFrame: DataFrame containing accelerometer data with columns ['x', 'y', 'z']
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame containing accelerometer data with columns ['x', 'y', 'z']
     """
 
     # Set default data_columns if not provided
@@ -123,13 +131,19 @@ def filter_galaxy_binary_data(
     """
     Filter Galaxy Watch accelerometer data by removing incomplete days and selecting longest consecutive sequence.
 
-    Args:
-        data (pd.DataFrame): Raw accelerometer data
-        meta_dict (dict): Dictionary to store metadata about the filtering process
-        verbose (bool): Whether to print progress information
+    Parameters
+    ----------
+    data : pd.DataFrame
+        Raw accelerometer data
+    meta_dict : dict
+        Dictionary to store metadata about the filtering process
+    verbose : bool
+        Whether to print progress information
 
-    Returns:
-        pd.DataFrame: Filtered accelerometer data
+    Returns
+    -------
+    pd.DataFrame
+        Filtered accelerometer data
     """
     _data = data.copy()
 
@@ -175,13 +189,19 @@ def resample_galaxy_binary_data(
     """
     Resample Galaxy Watch accelerometer data to a regular interval.
 
-    Args:
-        data (pd.DataFrame): Filtered accelerometer data
-        meta_dict (dict): Dictionary to store metadata about the resampling process
-        verbose (bool): Whether to print progress information
+    Parameters
+    ----------
+    data : pd.DataFrame
+        Filtered accelerometer data
+    meta_dict : dict
+        Dictionary to store metadata about the resampling process
+    verbose : bool
+        Whether to print progress information
 
-    Returns:
-        pd.DataFrame: Resampled accelerometer data at regular frequency.
+    Returns
+    -------
+    pd.DataFrame
+        Resampled accelerometer data at regular frequency.
     """
     _data = data.copy()
 
@@ -202,14 +222,21 @@ def preprocess_galaxy_binary_data(
     """
     Preprocess Galaxy Watch accelerometer data including rescaling, calibration, noise removal, and wear detection.
 
-    Args:
-        data (pd.DataFrame): Resampled accelerometer data
-        preprocess_args (dict): Dictionary containing preprocessing parameters
-        meta_dict (dict): Dictionary to store metadata about the preprocessing
-        verbose (bool): Whether to print progress information
+    Parameters
+    ----------
+    data : pd.DataFrame
+        Resampled accelerometer data
+    preprocess_args : dict
+        Dictionary containing preprocessing parameters
+    meta_dict : dict
+        Dictionary to store metadata about the preprocessing
+    verbose : bool
+        Whether to print progress information
 
-    Returns:
-        pd.DataFrame: Preprocessed accelerometer data with additional columns for raw values and wear detection
+    Returns
+    -------
+    pd.DataFrame
+        Preprocessed accelerometer data with additional columns for raw values and wear detection
     """
     _data = data.copy()
     _data[["x_raw", "y_raw", "z_raw"]] = _data[["x", "y", "z"]]

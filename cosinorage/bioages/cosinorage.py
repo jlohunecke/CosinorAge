@@ -67,13 +67,29 @@ class CosinorAge:
     This class implements the CosinorAge method proposed by Shim, Fleisch and Barata
     for predicting biological age based on accelerometer data patterns.
 
-    Args:
-        records (List[dict]): A list of dictionaries containing accelerometer data records.
-            Each record must contain a 'handler' key with a DataHandler object and an 'age' key.
-            Optionally, records can include a 'gender' key with values 'male', 'female', or 'unknown'.
+    Attributes
+    ----------
+    records : List[dict]
+        List of dictionaries containing accelerometer data records with computed predictions.
+    model_params_generic : dict
+        Model parameters for generic gender classification.
+    model_params_female : dict
+        Model parameters for female gender classification.
+    model_params_male : dict
+        Model parameters for male gender classification.
     """
 
     def __init__(self, records: List[dict]):
+        """
+        Initialize CosinorAge with accelerometer data records.
+
+        Parameters
+        ----------
+        records : List[dict]
+            A list of dictionaries containing accelerometer data records.
+            Each record must contain a 'handler' key with a DataHandler object and an 'age' key.
+            Optionally, records can include a 'gender' key with values 'male', 'female', or 'unknown'.
+        """
         self.records = records
 
         self.model_params_generic = model_params_generic
@@ -160,8 +176,10 @@ class CosinorAge:
     def get_predictions(self):
         """Return the processed records with CosinorAge predictions.
 
-        Returns:
-            List[dict]: The records list containing the original data and predictions.
+        Returns
+        -------
+        List[dict]
+            The records list containing the original data and predictions.
         """
         return self.records
 

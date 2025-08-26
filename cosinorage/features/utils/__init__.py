@@ -19,3 +19,41 @@
 # limitations under the License.
 ##########################################################################
 
+"""
+Utility functions for wearable feature computation and analysis.
+
+This module provides a comprehensive set of utility functions for processing
+accelerometer data and computing various wearable features including:
+
+**Circadian Rhythm Analysis:**
+- cosinor_analysis: Parametric analysis using cosinor modeling
+- nonparam_analysis: Non-parametric measures (IS, IV, M10, L5, RA)
+
+**Physical Activity Metrics:**
+- physical_activity_metrics: Activity level classification and metrics
+
+**Sleep Analysis:**
+- sleep_metrics: Sleep-wake prediction and sleep quality metrics
+
+**Data Processing:**
+- rescaling: Data normalization and scaling utilities
+
+**Visualization:**
+- visualization: Plotting functions for sleep, activity, and cosinor analysis
+- dashboard: Interactive dashboard for feature exploration
+
+**Usage:**
+    These utilities are typically used internally by the WearableFeatures
+    and BulkWearableFeatures classes, but can also be imported directly
+    for custom analysis workflows.
+
+**Examples:**
+    >>> from cosinorage.features.utils import cosinor_multiday, IS, IV
+    >>> # Compute cosinor parameters
+    >>> params, fitted = cosinor_multiday(enmo_data)
+    >>> # Calculate interdaily stability
+    >>> is_value = IS(enmo_data)
+    >>> # Calculate intradaily variability
+    >>> iv_value = IV(enmo_data)
+"""
+

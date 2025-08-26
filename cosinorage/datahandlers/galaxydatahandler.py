@@ -42,28 +42,20 @@ class GalaxyDataHandler(DataHandler):
     - Binary format with accelerometer data type
     - CSV format with ENMO data type
 
-    Args:
-        galaxy_file_path (str): Path to the Galaxy Watch data file (for CSV) or directory (for binary).
-        data_format (str): Format of the data - either 'csv' or 'binary'. Defaults to 'binary'.
-        data_type (str): Type of the data - either 'enmo' or 'accelerometer'.
-                        For CSV format, defaults to 'enmo'.
-                        For binary format, defaults to 'accelerometer'.
-        time_column (str): Name of the timestamp column in CSV files.
-                          For CSV format, defaults to 'time'.
-                          For binary format, defaults to 'unix_timestamp_in_ms'.
-        data_columns (list): Names of the data columns in CSV files.
-                            For 'enmo' data_type, defaults to ['enmo_mg'].
-                            For 'accelerometer' data_type, defaults to ['acceleration_x', 'acceleration_y', 'acceleration_z'].
-        preprocess_args (dict, optional): Arguments for preprocessing. Defaults to {}.
-        verbose (bool, optional): Whether to print processing information. Defaults to False.
-
-    Attributes:
-        galaxy_file_path (str): Path to the Galaxy Watch data file or directory.
-        data_format (str): Format of the data ('csv' or 'binary').
-        data_type (str): Type of the data ('enmo' or 'accelerometer').
-        time_column (str): Name of the timestamp column.
-        data_columns (list): Names of the data columns.
-        preprocess_args (dict): Arguments for preprocessing.
+    Attributes
+    ----------
+    galaxy_file_path : str
+        Path to the Galaxy Watch data file (for CSV) or directory (for binary).
+    data_format : str
+        Format of the data ('csv' or 'binary').
+    data_type : str
+        Type of the data ('enmo' or 'accelerometer').
+    time_column : str
+        Name of the timestamp column.
+    data_columns : list
+        Names of the data columns.
+    preprocess_args : dict
+        Arguments for preprocessing.
     """
 
     def __init__(
@@ -170,8 +162,10 @@ class GalaxyDataHandler(DataHandler):
         """
         Internal method to load and process Galaxy Watch data.
 
-        Args:
-            verbose (bool, optional): Whether to print processing information. Defaults to False.
+        Parameters
+        ----------
+        verbose : bool, optional
+            Whether to print processing information. Defaults to False.
         """
 
         if self.data_format == "csv" and self.data_type == "enmo":

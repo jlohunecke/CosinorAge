@@ -28,11 +28,15 @@ def clock(func):
     A decorator that prints the execution time of the decorated function.
     Only prints when verbose=True is passed to the decorated function.
 
-    Args:
-        func (function): The function to be decorated.
+    Parameters
+    ----------
+    func : function
+        The function to be decorated.
 
-    Returns:
-        function: The decorated function.
+    Returns
+    -------
+    function
+        The decorated function.
     """
 
     def inner(*args, **kwargs):
@@ -66,14 +70,16 @@ class DataHandler:
     data, retrieve processed ENMO values, and save data. The `load_data` and
     `save_data` methods are intended to be overridden by subclasses.
 
-    Attributes:
-        datasource (str): The source of the data ('smartwatch', 'nhanes', or 'uk-biobank').
-        input_path (str): The path to the input data.
-        preprocess (bool): Whether to preprocess the data.
-        sf_data (pd.DataFrame): A DataFrame storing accelerometer data.
-        acc_freq (int): The frequency of the accelerometer data.
-        meta_dict (dict): A dictionary storing metadata.
-        ml_data (pd.DataFrame): A DataFrame storing minute-level ENMO values.
+    Attributes
+    ----------
+    raw_data : pd.DataFrame or None
+        Raw accelerometer data loaded from the source.
+    sf_data : pd.DataFrame or None
+        Filtered and processed accelerometer data.
+    ml_data : pd.DataFrame or None
+        Minute-level ENMO data calculated from processed data.
+    meta_dict : dict
+        Dictionary storing metadata about the data processing.
     """
 
     def __init__(self):
@@ -81,10 +87,10 @@ class DataHandler:
         Initializes an empty DataHandler instance with an empty DataFrame
         for storing minute-level ENMO values.
 
-        Args:
-            datasource (str): The source of the data ('smartwatch', 'nhanes', or 'uk-biobank').
-            input_path (str): The path to the input data.
-            preprocess (bool): Whether to preprocess the data.
+        Notes
+        -----
+        This is a base class constructor. Subclasses should override this
+        method to accept specific parameters for their data sources.
         """
         self.raw_data = None
         self.sf_data = None
@@ -104,9 +110,10 @@ class DataHandler:
         This method is intended to be implemented by subclasses, specifying
         the format and structure for saving data.
 
-        Args:
-            output_path (str): The file path where the minute-level ENMO data
-                will be saved.
+        Parameters
+        ----------
+        output_path : str
+            The file path where the minute-level ENMO data will be saved.
         """
         if self.ml_data is None:
             raise ValueError(
@@ -119,8 +126,10 @@ class DataHandler:
         """
         Retrieve the raw data.
 
-        Returns:
-            pd.DataFrame: A DataFrame containing the raw data.
+        Returns
+        -------
+        pd.DataFrame
+            A DataFrame containing the raw data.
         """
         return self.raw_data
 
@@ -128,8 +137,10 @@ class DataHandler:
         """
         Retrieve the filtered data.
 
-        Returns:
-            pd.DataFrame: A DataFrame containing the filtered data.
+        Returns
+        -------
+        pd.DataFrame
+            A DataFrame containing the filtered data.
         """
         try:
             return self.sf_data
@@ -142,8 +153,10 @@ class DataHandler:
         """
         Retrieve the minute-level ENMO values.
 
-        Returns:
-            pd.DataFrame: A DataFrame containing the minute-level ENMO values.
+        Returns
+        -------
+        pd.DataFrame
+            A DataFrame containing the minute-level ENMO values.
         """
         if self.ml_data is None:
             raise ValueError(
@@ -156,7 +169,9 @@ class DataHandler:
         """
         Retrieve the metadata.
 
-        Returns:
-            dict: A dictionary containing the metadata.
+        Returns
+        -------
+        dict
+            A dictionary containing the metadata.
         """
         return self.meta_dict

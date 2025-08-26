@@ -65,30 +65,230 @@ class CosinorAge:
     """A class to compute biological age predictions using the CosinorAge method.
 
     This class implements the CosinorAge method proposed by Shim, Fleisch and Barata
-    for predicting biological age based on accelerometer data patterns.
+    for predicting biological age based on accelerometer data patterns. The method
+    uses cosinor analysis to extract circadian rhythm parameters (MESOR, amplitude, 
+    acrophase) from accelerometer data and applies gender-specific regression models
+    to predict biological age.
+
+    The CosinorAge method is based on the principle that circadian rhythm patterns
+    in physical activity are associated with biological aging. By analyzing the
+    daily activity patterns using cosinor analysis, the method can predict whether
+    an individual's biological age is advanced or delayed compared to their
+    chronological age.
 
     Attributes
     ----------
     records : List[dict]
         List of dictionaries containing accelerometer data records with computed predictions.
+        Each record contains the original data plus computed cosinor parameters and
+        biological age predictions.
     model_params_generic : dict
-        Model parameters for generic gender classification.
+        Model parameters for generic gender classification (used when gender is 'unknown').
     model_params_female : dict
         Model parameters for female gender classification.
     model_params_male : dict
         Model parameters for male gender classification.
+
+    Examples
+    --------
+    Basic usage with a single participant:
+
+    >>> from cosinorage.bioages import CosinorAge
+    >>> from cosinorage.datahandlers import GenericDataHandler
+    >>>
+    >>> # Create a data handler with accelerometer data
+    >>> handler = GenericDataHandler(
+    ...     file_path='data/participant_001.csv',
+    ...     data_type='accelerometer-mg',
+    ...     time_column='timestamp',
+    ...     data_columns=['x', 'y', 'z']
+    ... )
+    >>>
+    >>> # Create a record with age and gender information
+    >>> record = {
+    ...     'handler': handler,
+    ...     'age': 45.5,
+    ...     'gender': 'female'
+    ... }
+    >>>
+    >>> # Compute CosinorAge predictions
+    >>> cosinor_age = CosinorAge([record])
+    >>> predictions = cosinor_age.get_predictions()
+    >>>
+    >>> # Access the results
+    >>> result = predictions[0]
+    >>> print(f"Chronological age: {result['age']:.1f}")
+    >>> print(f"Predicted biological age: {result['cosinorage']:.1f}")
+    >>> print(f"Age advance: {result['cosinorage_advance']:.1f}")
+    >>> print(f"MESOR: {result['mesor']:.4f}")
+    >>> print(f"Amplitude: {result['amp1']:.4f}")
+    >>> print(f"Acrophase: {result['phi1']:.4f}")
+
+    Multiple participants with different genders:
+
+    >>> from cosinorage.datahandlers import GalaxyDataHandler
+    >>>
+    >>> # Create multiple data handlers
+    >>> handlers = []
+    >>> for i in range(3):
+    ...     handler = GalaxyDataHandler(f'data/participant_{i+1:03d}.csv')
+    ...     handlers.append(handler)
+    >>>
+    >>> # Create records with different ages and genders
+    >>> records = [
+    ...     {'handler': handlers[0], 'age': 30.2, 'gender': 'male'},
+    ...     {'handler': handlers[1], 'age': 45.8, 'gender': 'female'},
+    ...     {'handler': handlers[2], 'age': 62.1, 'gender': 'unknown'}
+    ... ]
+    >>>
+    >>> # Compute predictions for all participants
+    >>> cosinor_age = CosinorAge(records)
+    >>> predictions = cosinor_age.get_predictions()
+    >>>
+    >>> # Analyze results
+    >>> for i, pred in enumerate(predictions):
+    ...     print(f"Participant {i+1}:")
+    ...     print(f"  Age: {pred['age']:.1f}, Gender: {pred['gender']}")
+    ...     print(f"  Biological age: {pred['cosinorage']:.1f}")
+    ...     print(f"  Age advance: {pred['cosinorage_advance']:.1f}")
+    ...     if pred['cosinorage_advance'] > 0:
+    ...         print("  Status: Biologically older than chronological age")
+    ...     else:
+    ...         print("  Status: Biologically younger than chronological age")
+
+    Using with NHANES data:
+
+    >>> from cosinorage.datahandlers import NHANESDataHandler
+    >>>
+    >>> # Load NHANES data for a specific participant
+    >>> nhanes_handler = NHANESDataHandler(
+    ...     nhanes_file_dir='data/nhanes/',
+    ...     seqn=12345
+    ... )
+    >>>
+    >>> # Create record (NHANES data typically doesn't include gender)
+    >>> record = {
+    ...     'handler': nhanes_handler,
+    ...     'age': 55.0,
+    ...     'gender': 'unknown'  # Will use generic model
+    ... }
+    >>>
+    >>> # Compute predictions
+    >>> cosinor_age = CosinorAge([record])
+    >>> result = cosinor_age.get_predictions()[0]
+    >>>
+    >>> print(f"NHANES Participant Results:")
+    >>> print(f"Chronological age: {result['age']:.1f}")
+    >>> print(f"Biological age: {result['cosinorage']:.1f}")
+    >>> print(f"Age advance: {result['cosinorage_advance']:.1f}")
+
+    Visualizing results:
+
+    >>> # Generate plots comparing chronological vs biological age
+    >>> cosinor_age.plot_predictions()
+    >>> plt.show()
+
+    Error handling with invalid data:
+
+    >>> # Create a record with potentially invalid data
+    >>> invalid_record = {
+    ...     'handler': handler_with_invalid_data,
+    ...     'age': 40.0,
+    ...     'gender': 'male'
+    ... }
+    >>>
+    >>> # CosinorAge will handle errors gracefully
+    >>> cosinor_age = CosinorAge([invalid_record])
+    >>> result = cosinor_age.get_predictions()[0]
+    >>>
+    >>> # Check if computation was successful
+    >>> if result['cosinorage'] is None:
+    ...     print("Computation failed - invalid cosinor parameters")
+    ... else:
+    ...     print(f"Computation successful: {result['cosinorage']:.1f}")
+
+    Notes
+    -----
+    - The method requires at least 24 hours of continuous accelerometer data
+    - Data should be preprocessed to minute-level ENMO values
+    - Gender-specific models provide more accurate predictions than the generic model
+    - Invalid cosinor parameters (NaN, inf) result in None values for predictions
+    - The method automatically handles missing or invalid data gracefully
+    - Age advance > 0 indicates biological age is older than chronological age
+    - Age advance < 0 indicates biological age is younger than chronological age
+
+    References
+    ----------
+    Shim, S., Fleisch, E., & Barata, F. (2024). CosinorAge: A novel method for
+    predicting biological age from accelerometer data using circadian rhythm
+    analysis. npj Digital Medicine, 7(1), 1-12.
     """
 
     def __init__(self, records: List[dict]):
         """
         Initialize CosinorAge with accelerometer data records.
 
+        This method initializes the CosinorAge calculator and immediately computes
+        biological age predictions for all provided records. The computation is
+        performed automatically during initialization.
+
         Parameters
         ----------
         records : List[dict]
             A list of dictionaries containing accelerometer data records.
-            Each record must contain a 'handler' key with a DataHandler object and an 'age' key.
-            Optionally, records can include a 'gender' key with values 'male', 'female', or 'unknown'.
+            Each record must contain:
+            - 'handler': A DataHandler object (e.g., GenericDataHandler, GalaxyDataHandler)
+              that provides minute-level ENMO data via get_ml_data() method
+            - 'age': Chronological age as a float (e.g., 45.5)
+            
+            Each record may optionally contain:
+            - 'gender': Gender classification as string ('male', 'female', or 'unknown')
+              If not provided, defaults to 'unknown' and uses the generic model
+
+        Examples
+        --------
+        Basic initialization with a single record:
+
+        >>> from cosinorage.bioages import CosinorAge
+        >>> from cosinorage.datahandlers import GenericDataHandler
+        >>>
+        >>> # Create data handler
+        >>> handler = GenericDataHandler('data/participant.csv')
+        >>>
+        >>> # Create record
+        >>> record = {
+        ...     'handler': handler,
+        ...     'age': 35.0,
+        ...     'gender': 'male'
+        ... }
+        >>>
+        >>> # Initialize and compute predictions
+        >>> cosinor_age = CosinorAge([record])
+        >>> print(f"Computed predictions for {len(cosinor_age.records)} record(s)")
+
+        Multiple records with different configurations:
+
+        >>> # Create multiple handlers
+        >>> handlers = [GenericDataHandler(f'data/participant_{i}.csv') for i in range(3)]
+        >>>
+        >>> # Create records with different ages and genders
+        >>> records = [
+        ...     {'handler': handlers[0], 'age': 25.0, 'gender': 'male'},
+        ...     {'handler': handlers[1], 'age': 40.0, 'gender': 'female'},
+        ...     {'handler': handlers[2], 'age': 55.0}  # gender defaults to 'unknown'
+        ... ]
+        >>>
+        >>> # Initialize and compute all predictions
+        >>> cosinor_age = CosinorAge(records)
+        >>> print(f"Computed predictions for {len(cosinor_age.records)} participants")
+
+        Notes
+        -----
+        - The computation is performed immediately during initialization
+        - Each record is processed independently
+        - Failed computations (invalid data) result in None values for predictions
+        - Gender-specific models are used when gender is 'male' or 'female'
+        - Generic model is used when gender is 'unknown' or not provided
         """
         self.records = records
 
@@ -176,20 +376,133 @@ class CosinorAge:
     def get_predictions(self):
         """Return the processed records with CosinorAge predictions.
 
+        This method returns the complete records list with all computed predictions
+        and cosinor parameters. Each record contains the original input data plus
+        the computed biological age predictions and circadian rhythm parameters.
+
         Returns
         -------
         List[dict]
             The records list containing the original data and predictions.
+            Each record dictionary includes:
+            - Original keys: 'handler', 'age', 'gender'
+            - Computed cosinor parameters: 'mesor', 'amp1', 'phi1'
+            - Biological age predictions: 'cosinorage', 'cosinorage_advance'
+
+        Examples
+        --------
+        Basic usage:
+
+        >>> from cosinorage.bioages import CosinorAge
+        >>> from cosinorage.datahandlers import GenericDataHandler
+        >>>
+        >>> # Create and compute predictions
+        >>> handler = GenericDataHandler('data/participant.csv')
+        >>> record = {'handler': handler, 'age': 35.0, 'gender': 'male'}
+        >>> cosinor_age = CosinorAge([record])
+        >>>
+        >>> # Get predictions
+        >>> predictions = cosinor_age.get_predictions()
+        >>> result = predictions[0]
+        >>>
+        >>> # Access all computed values
+        >>> print(f"Age: {result['age']}")
+        >>> print(f"Gender: {result['gender']}")
+        >>> print(f"Biological age: {result['cosinorage']:.1f}")
+        >>> print(f"Age advance: {result['cosinorage_advance']:.1f}")
+        >>> print(f"MESOR: {result['mesor']:.4f}")
+        >>> print(f"Amplitude: {result['amp1']:.4f}")
+        >>> print(f"Acrophase: {result['phi1']:.4f}")
+
+        Multiple participants:
+
+        >>> # Process multiple participants
+        >>> records = [
+        ...     {'handler': handler1, 'age': 25.0, 'gender': 'male'},
+        ...     {'handler': handler2, 'age': 40.0, 'gender': 'female'},
+        ...     {'handler': handler3, 'age': 55.0, 'gender': 'unknown'}
+        ... ]
+        >>> cosinor_age = CosinorAge(records)
+        >>> predictions = cosinor_age.get_predictions()
+        >>>
+        >>> # Analyze all results
+        >>> for i, pred in enumerate(predictions):
+        ...     print(f"Participant {i+1}: {pred['age']:.0f} years old")
+        ...     print(f"  Biological age: {pred['cosinorage']:.1f}")
+        ...     print(f"  Age advance: {pred['cosinorage_advance']:.1f}")
+
+        Notes
+        -----
+        - Returns the same records that were passed to the constructor
+        - Each record is updated in-place with computed predictions
+        - Failed computations result in None values for prediction fields
+        - The method can be called multiple times without recomputation
         """
         return self.records
 
     def plot_predictions(self):
         """Generate visualization plots comparing chronological age vs CosinorAge.
 
-        Creates a plot for each record showing:
-            - Chronological age and CosinorAge as points on a timeline
-            - Color-coded difference between ages (red for advanced, green for younger)
-            - Numerical values for both ages
+        This method creates individual plots for each record showing the comparison
+        between chronological age and predicted biological age. The plots use a
+        timeline visualization with color coding to indicate whether the biological
+        age is advanced (red) or delayed (green) compared to chronological age.
+
+        The plots include:
+        - Chronological age and CosinorAge as points on a timeline
+        - Color-coded line segments (red for advanced, green for younger)
+        - Numerical labels showing exact age values
+        - Clear visual distinction between the two age measures
+
+        Examples
+        --------
+        Basic plotting:
+
+        >>> from cosinorage.bioages import CosinorAge
+        >>> from cosinorage.datahandlers import GenericDataHandler
+        >>>
+        >>> # Create and compute predictions
+        >>> handler = GenericDataHandler('data/participant.csv')
+        >>> record = {'handler': handler, 'age': 45.0, 'gender': 'female'}
+        >>> cosinor_age = CosinorAge([record])
+        >>>
+        >>> # Generate visualization
+        >>> cosinor_age.plot_predictions()
+        >>> plt.show()
+
+        Multiple participants:
+
+        >>> # Process multiple participants
+        >>> records = [
+        ...     {'handler': handler1, 'age': 30.0, 'gender': 'male'},
+        ...     {'handler': handler2, 'age': 50.0, 'gender': 'female'},
+        ...     {'handler': handler3, 'age': 65.0, 'gender': 'unknown'}
+        ... ]
+        >>> cosinor_age = CosinorAge(records)
+        >>>
+        >>> # Generate plots for all participants
+        >>> cosinor_age.plot_predictions()
+        >>> plt.show()
+
+        Customizing plots:
+
+        >>> # Generate plots and customize
+        >>> cosinor_age.plot_predictions()
+        >>> 
+        >>> # Access the current figure for customization
+        >>> fig = plt.gcf()
+        >>> fig.suptitle('CosinorAge Predictions Comparison', fontsize=16)
+        >>> plt.show()
+
+        Notes
+        -----
+        - Creates one plot per record in the dataset
+        - Red color indicates biological age > chronological age (advanced aging)
+        - Green color indicates biological age < chronological age (delayed aging)
+        - Plots are displayed immediately when called
+        - Records with invalid predictions (None values) are skipped
+        - Each plot shows exact numerical values for both ages
+        - The visualization helps quickly identify aging patterns across participants
         """
         for record in self.records:
             # Skip records with invalid cosinorage values

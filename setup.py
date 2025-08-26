@@ -6,7 +6,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="cosinorage",
-    version="1.0.4",
+    version="1.0.5",
     description="A package for computing the CosinorAge from raw accelerometer data.",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -14,10 +14,10 @@ setup(
     author_email="jacob.hunecke@ethz.ch",
     url="https://github.com/jlohunecke/CosinorAge.git",
     packages=find_packages(),
+    license="Apache-2.0",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",

@@ -111,7 +111,8 @@ Below, you will find a detailed description of each supported data source and it
 
 #### GalaxyDataHandler 
 
-> ⚠️ **DISCLAIMER**: Signal scaling factors have been calibrated through internal validation experiments. Use with caution.
+> [!NOTE]
+> Signal scaling factors have been calibrated through internal validation experiments. Use with caution.
 
 The GalaxyDataHandler is used to load and preprocess data from the Galaxy Smartwatch. The data is expected to be located in a directory with the following structure:
 

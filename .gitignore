@@ -79,3 +79,8 @@ logs/
 
 # User configuration files
 ~/
+
+# Coverage files
+.coverage
+.coverage.*
+htmlcov/

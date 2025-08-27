@@ -24,7 +24,7 @@ if os.environ.get("READTHEDOCS", "") == "True":
 project = 'CosinorAge'
 copyright = '2025, Jacob Leo Oskar Hunecke'
 author = 'Jacob Leo Oskar Hunecke'
-release = '0.0.1'
+release = '1.0.5'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

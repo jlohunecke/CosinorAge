@@ -3,7 +3,7 @@
     <h1 style="margin-right: 10px;">CosinorAge</h1>
 </div>
 
-[![Documentation Status](https://readthedocs.org/projects/cosinorage-deployed/badge/?version=latest)](https://cosinorage-deployed.readthedocs.io/en/latest/)
+[![Documentation Status](https://readthedocs.org/projects/cosinorage/badge/?version=latest)](https://cosinorage.readthedocs.io/en/latest/)
 
 
 An open-source Python package for estimating biological age based on circadian rhythms derived from accelerometer data. The package offers a unified framework that integrates data preprocessing, feature extraction, and predictive modeling of biological age using the CosinorAge biomarker.

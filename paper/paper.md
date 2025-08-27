@@ -77,7 +77,15 @@ Final stage of the pipeline: predicts the `CosinorAge` biomarker using a proport
 
 The web-based interface (www.cosinorage.app) allows non-technical users to analyze their data with the same backend package. It provides an overview, documentation, and an interactive calculator with CSV uploads, cohort summaries, correlation matrices, and visual dashboards.  
 
-![Data upload interface.\label{fig:Fig3}](figures/calc1.jpeg)
-![Summary dashboard.\label{fig:Fig4}](figures/calc2.jpeg)
+<div style="display: flex; justify-content: space-between; align-items: flex-start;">
+  <figure style="flex: 1; margin-right: 10px;">
+    <img src="figures/calc1.jpeg" alt="Data upload interface." style="width:100%;">
+    <figcaption>Data upload interface.<a name="fig:Fig3"></a></figcaption>
+  </figure>
+  <figure style="flex: 1; margin-left: 10px;">
+    <img src="figures/calc2.jpeg" alt="Summary dashboard." style="width:100%;">
+    <figcaption>Summary dashboard.<a name="fig:Fig4"></a></figcaption>
+  </figure>
+</div>
 
 # References

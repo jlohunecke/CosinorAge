@@ -63,5 +63,3 @@ autodoc_default_flags = ['members']
 autodoc_member_order = 'bysource'
 autodoc_typehints = 'description'
 add_module_names = False  # Makes output cleaner
-
-html_logo = "_static/logo.png"

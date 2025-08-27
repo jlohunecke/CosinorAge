@@ -1,7 +1,4 @@
-<div style="display: flex; align-items: center;">
-    <img src="docs/source/_static/logo.png" alt="Logo" width="150" height="150">
-    <h1 style="margin-right: 10px;">CosinorAge</h1>
-</div>
+# CosinorAge
 
 [![Documentation Status](https://readthedocs.org/projects/cosinorage/badge/?version=latest)](https://cosinorage.readthedocs.io/en/latest/)
 [![PyPI version](https://badge.fury.io/py/cosinorage.svg)](https://badge.fury.io/py/cosinorage)

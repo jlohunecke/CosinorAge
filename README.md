@@ -106,7 +106,8 @@ The figure below illustrates the supported data sources and the required file ty
 
 Below, you will find a detailed description of each supported data source and its corresponding DataHandler.
 
-> ⚠️ **DISCLAIMER**: Not all data files can be made publicly available in this repository due to privacy regulations governing personal health data. Some datasets (such as UK Biobank data) require specific access permissions and cannot be distributed publicly.
+> [!NOTE]
+> Not all data files can be made publicly available in this repository due to privacy regulations governing personal health data. Some datasets (such as UK Biobank data) require specific access permissions and cannot be distributed publicly.
 
 #### GalaxyDataHandler 
 

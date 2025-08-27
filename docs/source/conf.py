@@ -46,6 +46,7 @@ exclude_patterns = []
 
 html_theme = 'furo'
 html_static_path = ['_static']
+html_title = 'CosinorAge 1.0.5 Documentation'
 
 autosummary_generate = True
 

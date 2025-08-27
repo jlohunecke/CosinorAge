@@ -106,6 +106,8 @@ The figure below illustrates the supported data sources and the required file ty
 
 Below, you will find a detailed description of each supported data source and its corresponding DataHandler.
 
+> ⚠️ **DISCLAIMER**: Not all data files can be made publicly available in this repository due to privacy regulations governing personal health data. Some datasets (such as UK Biobank data) require specific access permissions and cannot be distributed publicly.
+
 #### GalaxyDataHandler 
 
 > ⚠️ **DISCLAIMER**: Signal scaling factors have been calibrated through internal validation experiments. Use with caution.
@@ -165,7 +167,7 @@ Example usage for ENMO data:
 ```python
 generic_handler = GenericDataHandler(
     file_path='data/enmo_data.csv',
-    data_type='enmo',
+    data_type='enmo-mg',
     time_column='timestamp',
     data_columns=['enmo'],
     preprocess_args=preprocess_args,
@@ -177,7 +179,7 @@ Example usage for accelerometer data:
 ```python
 generic_handler = GenericDataHandler(
     file_path='data/accel_data.csv',
-    data_type='accelerometer',
+    data_type='accelerometer-mg',
     time_column='time',
     data_columns=['x', 'y', 'z'],
     preprocess_args=preprocess_args,

@@ -58,7 +58,7 @@ The **CosinorAge Python Package** and **CosinorAge Calculator** are applicable t
 
 The **CosinorAge Python package** is structured into three core modules, each representing a key stage in the pipeline for analyzing accelerometer data and predicting biological age, `CosinorAge`. Its modular architecture allows components to be used independently or integrated into a streamlined workflow. Figure 2 illustrates the modular design and high-level data flow between components.
 
-![Package Scheme.](figures/schema.png)
+![Package scheme.](figures/schema.png)
 
 ### DataHandler Module
 The package provides a total of four DataHandler subclasses to support accelerometer data from multiple sources including UK Biobank (UKB), NHANES, Samsung Galaxy Smartwatches (Galaxy), and Bring-Your-Own-Data (BYOD). UKBDataHandler, NHANESDataHandler, and GalaxyDataHandler perform source-specific filtering, preprocessing, and scaling to produce standardized, minute-level ENMO time series. Detailed data pre-processing for each DataHandler can be found on GitHub. For greater flexibility, a GenericDataHandler is also provided, allowing users to process any compatible CSV file formatted according to a defined specification through BYOD approach. The resulting ENMO data can then be passed to the feature extraction and modeling modules for downstream analysis.

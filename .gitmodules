@@ -1,0 +1,3 @@
+[submodule "CosinorAge-Calculator"]
+	path = CosinorAge-Calculator
+	url = https://github.com/ADAMMA-CDHI-ETH-Zurich/CosinorAge-Calculator
